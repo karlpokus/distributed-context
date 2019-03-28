@@ -22,10 +22,13 @@ var (
 	cLog = newLogger("c")
 )
 
+// newLogger returns a logger with a name
 func newLogger(name string) *log.Logger {
 	return log.New(os.Stdout, name+" ", log.Ldate|log.Ltime)
 }
 
+// httpReq adds a context and runs a http call
+// then parses and returns the body
 func httpReq(ctx context.Context, url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -44,9 +47,9 @@ func main() {
 		cLog.Println("got a call")
 		ctx := r.Context()
 		done := make(chan bool)
-
+		
 		go func() {
-			time.Sleep(5 * time.Second) // artificial delay
+			time.Sleep(1 * time.Second) // artificial delay
 			done <- true
 		}()
 
@@ -96,7 +99,7 @@ func main() {
 	defer b.Close()
 
 	// a
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	aLog.Println("calling b")
 	res, err := httpReq(ctx, b.URL)
